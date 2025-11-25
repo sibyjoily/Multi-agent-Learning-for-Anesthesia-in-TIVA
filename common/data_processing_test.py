@@ -287,11 +287,6 @@ class proceesing:
             lambda x: str(x))
         next_state_dl = self.trajectory_train_thoracic['next_state_agent'].apply(ast.literal_eval)
         next_state_dl = torch.tensor(next_state_dl.values.tolist())
-
-        # self.train_data['next_state_pk_dl'] = self.train_data['next_state_pk_dl'].apply(lambda x: str(x))
-        # next_state_pk_dl = self.train_data['next_state_pk_dl'].apply(ast.literal_eval)
-        # next_state_pk_dl = torch.tensor(next_state_pk_dl.values.tolist())
-
         rewards = torch.tensor(self.trajectory_train_thoracic['reward'].values, dtype=torch.float32)
         case_ids = torch.tensor(self.trajectory_train_thoracic['caseid'].values, dtype=torch.int32)
         ######################################################################################################
@@ -346,13 +341,7 @@ class proceesing:
         max_val=350.0
         denormalized_data = data * (max_val - min_val) + min_val
         return denormalized_data
-        # if single_or_multi == 'multi':
-        #     denormalized_data_list = [x * (max_val - min_val) + min_val for x in data]
-        #     return denormalized_data_list
-        # else:
-        #     denormalized_data = data * (max_val - min_val) + min_val
-        #     return denormalized_data
-
+  
 
     def min_max_normalize(self, data, single_or_multi='multi'):
         # 归一化
@@ -362,39 +351,6 @@ class proceesing:
         else:
             normalized_data_single = (data - self.min_val) / (self.max_val - self.min_val)
             return normalized_data_single
-######################################################################################################
-    def reward_function(self, bis, action1, action2):
-        # Convert the inputs to PyTorch tensors if they are not already
-        if isinstance(bis, (pd.Series, np.ndarray)):
-            bis = torch.tensor(bis.values, dtype=torch.float32)
-        if isinstance(action1, (pd.Series, np.ndarray)):
-            action1 = torch.tensor(action1.values, dtype=torch.float32)
-        if isinstance(action2, (pd.Series, np.ndarray)):
-            action2 = torch.tensor(action2.values, dtype=torch.float32)
-        # BIS奖励50=0.1428 40-60=[0.1142, 0.1714])
-        # BIS奖励
-        # BIS奖励: 越接近50越好
-        ############################################################################################################
-        # # bis_reward = torch.exp(-torch.abs(bis - 0.1428))  # 50 对应的归一化值为 0.1428
-        bis_ideal_range = torch.tensor([0.1142, 0.1714])
-        # Calculate the means and standard deviations
-        bis_ideal_mean = bis_ideal_range.mean()
-        bis_ideal_std = (bis_ideal_range[1] - bis_ideal_range[0])
-
-        bis_reward = torch.exp(-((bis - bis_ideal_mean) ** 2) / (2 * (bis_ideal_std ** 2)))
-        ############################################################################################################
-        # bis_reward = 1.156 * (np.exp(-((bis - 0.1428) ** 2) / 0.00040898) - 0.1353)
-        # # Action1奖励: 值越接近0越好
-        ############################################################################################################
-        # # Action1+Action2的总和越小越好
-        # total = action1 + action2
-        # # Exponential decay
-        # # reward = torch.exp(-total)
-        # # Inverse relationship
-        # reward = 1 / (1 + total)  # Adding 1 to avoid division by zero
-        # # # # 总奖励
-        # total_reward = bis_reward + reward
-        return bis_reward
 ######################################################################################################
 ############################################################################################################
     def bis_reward_function(self,bis):
@@ -414,150 +370,3 @@ class proceesing:
         total_reward = bis_reward
 
         return total_reward
-    ############################################################################################################
-    # def reward_function(self,bis):
-    #     # Convert the inputs to PyTorch tensors if they are not already
-    #     if isinstance(bis, (pd.Series, np.ndarray)):
-    #         bis = torch.tensor(bis.values, dtype=torch.float32)
-    #     # if isinstance(vent_rr, (pd.Series, np.ndarray)):
-    #     #     vent_rr = torch.tensor(vent_rr.values, dtype=torch.float32)
-    #     # if isinstance(art_mbp, (pd.Series, np.ndarray)):
-    #     #     art_mbp = torch.tensor(art_mbp.values, dtype=torch.float32)
-    #
-    #     # Define ideal ranges as tensors 40 <= bis <= 60   60<=hr<=100   70 <= map <= 110
-    #     bis_ideal_range = torch.tensor([0.1142, 0.1714])
-    #     # vent_rr_ideal_range = torch.tensor([0.1714, 0.2857])
-    #     # art_mbp_ideal_range = torch.tensor([0.2, 0.3142])
-    #
-    #     # Calculate the means and standard deviations
-    #     bis_ideal_mean = bis_ideal_range.mean()
-    #     bis_ideal_std = (bis_ideal_range[1] - bis_ideal_range[0])
-    #
-    #     # vent_rr_ideal_mean = vent_rr_ideal_range.mean()
-    #     # vent_rr_ideal_std = (vent_rr_ideal_range[1] - vent_rr_ideal_range[0])
-    #     #
-    #     # art_mbp_ideal_mean = art_mbp_ideal_range.mean()
-    #     # art_mbp_ideal_std = (art_mbp_ideal_range[1] - art_mbp_ideal_range[0])
-    #
-    #     # Calculate the rewards
-    #     # bis_reward = 1 - torch.abs((bis - bis_ideal_mean) / bis_ideal_std)
-    #     # vent_rr_reward = 1 - torch.abs((vent_rr - vent_rr_ideal_mean) / vent_rr_ideal_std)
-    #     # art_mbp_reward = 1 - torch.abs((art_mbp - art_mbp_ideal_mean) / art_mbp_ideal_std)
-    #
-    #
-    #     bis_reward = torch.exp(-((bis - bis_ideal_mean) ** 2) / (2 * (bis_ideal_std ** 2)))
-    #     # vent_rr_reward = torch.exp(-((vent_rr - vent_rr_ideal_mean) ** 2) / (2 * (vent_rr_ideal_std ** 2)))
-    #     # art_mbp_reward = torch.exp(-((art_mbp - art_mbp_ideal_mean) ** 2) / (2 * (art_mbp_ideal_std ** 2)))
-    #
-    #     # Combine the rewards
-    #     total_reward = bis_reward
-    #
-    #     return total_reward
-
-        ######################################################################################################
-    # BIS奖励: 在40 - 60之间时使用指数函数，超出范围时使用平方惩罚。
-    # Action1和Action2:在0 - 14之间时，使用指数函数，值越小奖励越高。超出范围时，使用平方惩罚。
-
-    ######################################################################################################
-    ################################################原reward function######################################################
-
-    #
-    # def reward_function(self,bis, hr, map, single_or_multi='single'):
-    #     if single_or_multi == 'single':
-    #         # 初始化奖励
-    #         reward = 0
-    #         # 对BIS值进行奖励/惩罚
-    #         if 40 <= bis <= 60:
-    #             reward += 1  # BIS在目标范围内，给予正奖励
-    #         else:
-    #             reward -= abs(bis - 50) / 10  # BIS不在目标范围内，根据偏离程度给予惩罚
-    #         # 对HR值进行奖励/惩罚
-    #         if 60 <= hr <= 100:
-    #             reward += 1  # HR在目标范围内，给予正奖励
-    #         else:
-    #             reward -= abs(hr - 80) / 20  # HR不在目标范围内，根据偏离程度给予惩罚
-    #         # 对MAP值进行奖励/惩罚
-    #         if 65 <= map <= 75:
-    #             reward += 1  # MAP在目标范围内，给予正奖励
-    #         else:
-    #             reward -= abs(map - 70) / 5  # MAP不在目标范围内，根据偏离程度给予惩罚
-    #         return reward
-    #     else:
-    #         # 初始化奖励数组
-    #         reward_array = np.zeros(bis.shape)
-    #
-    #         # 对BIS值进行奖励/惩罚
-    #         reward_array += np.where((bis >= 40) & (bis <= 60), 1, -np.abs(bis - 50) / 10)
-    #
-    #         # 对HR值进行奖励/惩罚
-    #         reward_array += np.where((hr>= 60) & (hr <= 100), 1, -np.abs(hr - 80) / 20)
-    #         # 对MAP值进行奖励/惩罚
-    #         reward_array += np.where((map>= 65) & (map <= 75), 1, -np.abs(map - 70) / 5)
-    #         return reward_array
-    # # def reward_function(self, bis, single_or_multi='single'):
-    #     # 0.09654075178214226
-    #     if single_or_multi == 'single':
-    #         return math.exp(- 0.08 *abs(bis - 0.09654))
-    #
-    #     else:
-    #         return list(map(lambda x: math.exp(- 0.08 * abs(x - 0.09654)), bis))
-
-
-
-
- #
-    # def reward_function(self, bis_series,time_series, total_time, single_or_multi='multi'):
-    #     # 定义BIS目标范围 40 <= bis <= 60
-    #     BIS_TARGET_LOW = 0.1142
-    #     BIS_TARGET_HIGH = 0.1714
-    #     BIS_OPTIMAL = 0.1428
-    #
-    #     if np.isscalar(bis_series):
-    #         bis_series = pd.Series([bis_series])
-    #
-    #     # 定义时间相关系数的 Series
-    #     TIME_DECAY_FACTOR = 1 - (time_series / total_time)
-    #
-    #     # 创建一个与 bis_series 等长的初始奖励 Series，并设置默认奖励值为 -1
-    #     reward_series = pd.Series(-1, index=bis_series.index)
-    #     # 如果BIS在目标范围内，给予正奖励
-    #     reward_series[(bis_series >= BIS_TARGET_LOW) & (bis_series <= BIS_TARGET_HIGH)] = 1
-    #     # 根据BIS距离目标值的距离调整奖励
-    #     reward_series *= (1 - abs(bis_series - BIS_OPTIMAL) / BIS_OPTIMAL)
-    #     # 在时间序列即将结束时，减小action的影响力，增加BIS的值
-    #     # # 假设最后20%的时间准备结束手术
-    #     # if single_or_multi == 'multi':
-    #     #     reward_series[time_series > total_time * 0.9] *= TIME_DECAY_FACTOR
-    #     # else:
-    #     #     if (time_series > total_time * 0.9):
-    #     #         reward_series *= TIME_DECAY_FACTOR
-    #
-    #     return reward_series
-        #考虑MBP和HR的奖励和惩罚
-        # #定义MBP和HR的目标范围 60<=hr<=100   70 <= map <= 110
-        # if isinstance(vent_hr, (pd.Series, np.ndarray)):
-        #     vent_hr = torch.tensor(vent_hr.values, dtype=torch.float32)
-        # if isinstance(art_mbp, (pd.Series, np.ndarray)):
-        #     art_mbp = torch.tensor(art_mbp.values, dtype=torch.float32)
-        #
-        # vent_hr_ideal_range = torch.tensor([0.1714, 0.2857])
-        # art_mbp_ideal_range = torch.tensor([0.2, 0.3142])
-        #
-        # # Calculate the means and standard deviations
-        # vent_hr_ideal_mean = vent_hr_ideal_range.mean()
-        # vent_hr_ideal_std = (vent_hr_ideal_range[1] - vent_hr_ideal_range[0])
-        # art_mbp_ideal_mean = art_mbp_ideal_range.mean()
-        # art_mbp_ideal_std = (art_mbp_ideal_range[1] - art_mbp_ideal_range[0])
-        #
-        # # Calculate the rewards
-        # vent_hr_reward = 1 - torch.abs((vent_hr - vent_hr_ideal_mean) / vent_hr_ideal_std)
-        # art_mbp_reward = 1 - torch.abs((art_mbp - art_mbp_ideal_mean) / art_mbp_ideal_std)
-        #
-        # vent_hr_reward_numpy = vent_hr_reward.numpy()
-        # art_mbp_reward_numpy = art_mbp_reward.numpy()
-        #
-        # # Convert the numpy arrays to Pandas Series
-        # vent_hr_reward_series = pd.Series(vent_hr_reward_numpy)
-        # art_mbp_reward_series = pd.Series(art_mbp_reward_numpy)
-        # #总奖励值是三个指标的奖励值的和
-        # reward_series = reward_series + vent_hr_reward_series + art_mbp_reward_series
