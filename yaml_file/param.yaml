@@ -1,0 +1,110 @@
+basic_config:
+  result_root: '../result/'
+  image_root: '../result/image/'
+  weight_root: '../result/weight/'
+  loss_image_root: '../result/loss_image/'
+  test_root: '../result/test/'
+  data_root: '../data/'
+  predata_root: '../pre_data/'
+  model_list: [ 'MADDPG', 'COMA', 'MAPPO', 'MAAC' ]
+
+
+
+
+
+
+    # predata_backup_root: '../pre_data_backup/'
+
+model_common:
+  max_episodes: 4
+  tolerance: 20
+  loss_threshold: 0.001
+  batch_size: 600
+  num_agents: 2
+  epsilon: 0.2
+  device: 'windows'
+
+
+DQN:
+  lr: 0.0002
+  gamma: 0.5918
+  gamma_discount: 0.5918
+
+VDN:
+  lr: 0.0002
+  gamma: 0.5918
+  gamma_discount: 0.5918
+
+DDQN:
+  lr: 0.002
+  gamma: 0.5918
+  gamma_discount: 0.5918
+  target_update: 1
+
+
+QPLEX:
+  lr: 0.0002
+  gamma: 0.5918
+  gamma_discount: 0.5918
+
+CW_QMIX:
+  lr: 0.0002
+  gamma: 0.5918
+  gamma_discount: 0.5918
+  alpha: 0.1
+
+#QMIX:
+#  lr: 0.07
+#  gamma: 0.28
+#  gamma_discount: 0.32
+#  target_update: 3
+
+QMIX:
+  lr: 0.0002
+  gamma: 0.5918
+  gamma_discount: 0.5918
+
+
+MADDPG:
+  tau: 0.003
+  lr_actor: 0.0002
+  lr_critic: 0.0003
+  gamma: 0.5918
+  weight_decay: 0
+  policy_model: 'MADDPG'
+  clip_param: 0.2
+
+
+COMA:
+  lr_actor: 0.0002
+  lr_critic: 0.0003
+  gamma: 0.5918
+  weight_decay: 0
+  epsilon: 0.2
+  policy_model: 'COMA'
+
+MAPPO:
+  lr_actor: 0.0002
+  lr_critic: 0.0003
+  gamma: 0.5918
+  weight_decay: 0
+  epsilon: 0.2
+  clip_param: 0.2
+  ppo_epochs: 10
+  tau: 0.85
+  epochs: 1000
+  policy_model: 'MAPPO'
+
+MAAC:
+  lr_actor: 0.0002
+  lr_critic: 0.0003
+  gamma: 0.5918
+  weight_decay: 0
+  epsilon: 0.2
+  epochs: 1000
+  policy_model: 'MAAC'
+
+
+
+
+
