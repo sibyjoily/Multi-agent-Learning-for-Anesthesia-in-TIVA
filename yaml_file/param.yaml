@@ -83,17 +83,6 @@ COMA:
   epsilon: 0.2
   policy_model: 'COMA'
 
-MAPPO:
-  lr_actor: 0.0002
-  lr_critic: 0.0003
-  gamma: 0.5918
-  weight_decay: 0
-  epsilon: 0.2
-  clip_param: 0.2
-  ppo_epochs: 10
-  tau: 0.85
-  epochs: 1000
-  policy_model: 'MAPPO'
 
 MAAC:
   lr_actor: 0.0002
