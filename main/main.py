@@ -26,10 +26,6 @@ model.draw()
 
 model.test(reload=False,is_sampling=True,dataset_name='general')
 
-###########################################################################################################
-
-
-# model.test_fixaction(reload=False,is_sampling=False,dataset_name='general')
 print('done')
 
 
